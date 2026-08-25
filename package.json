@@ -1,7 +1,6 @@
 {
-  "name": "openai-nim-proxy",
+  "name": "deepseek-v4-flash-proxy",
   "version": "1.0.0",
-  "description": "OpenAI compatible proxy for NVIDIA NIM API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
