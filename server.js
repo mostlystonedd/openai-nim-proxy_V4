@@ -1,3 +1,4 @@
+// server.js - DeepSeek V4 Flash (0731) Proxy with multi-key rotation
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 const NIM_API_BASE = process.env.NIM_API_BASE || 'https://integrate.api.nvidia.com/v1';
 
+// Supports up to 3 API keys for rotation (add NIM_API_KEY_2 / NIM_API_KEY_3 in Render env vars if you have them)
 const NIM_API_KEYS = [
   process.env.NIM_API_KEY,
   process.env.NIM_API_KEY_2,
@@ -34,22 +36,22 @@ const SHOW_REASONING = false;
 const THINKING_MODE = false;
 
 const MODEL_MAPPING = {
-  'gpt-3.5-turbo':  'deepseek-ai/deepseek-v4-flash',
-  'gpt-4':          'deepseek-ai/deepseek-v4-flash',
-  'gpt-4-turbo':    'deepseek-ai/deepseek-v4-flash',
-  'gpt-4o':         'deepseek-ai/deepseek-v4-flash',
-  'gpt-5':          'deepseek-ai/deepseek-v4-flash',
-  'gpt-5.5':        'deepseek-ai/deepseek-v4-flash',
-  'claude-3-opus':  'deepseek-ai/deepseek-v4-flash',
-  'claude-3-sonnet':'deepseek-ai/deepseek-v4-flash',
-  'gemini-pro':     'deepseek-ai/deepseek-v4-flash'
+  'gpt-3.5-turbo':   'deepseek-ai/deepseek-v4-flash-0731',
+  'gpt-4':           'deepseek-ai/deepseek-v4-flash-0731',
+  'gpt-4-turbo':     'deepseek-ai/deepseek-v4-flash-0731',
+  'gpt-4o':          'deepseek-ai/deepseek-v4-flash-0731',
+  'gpt-5':           'deepseek-ai/deepseek-v4-flash-0731',
+  'gpt-5.5':         'deepseek-ai/deepseek-v4-flash-0731',
+  'claude-3-opus':   'deepseek-ai/deepseek-v4-flash-0731',
+  'claude-3-sonnet': 'deepseek-ai/deepseek-v4-flash-0731',
+  'gemini-pro':      'deepseek-ai/deepseek-v4-flash-0731'
 };
 
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
     service: 'OpenAI to NVIDIA NIM Proxy',
-    model: 'deepseek-ai/deepseek-v4-flash',
+    model: 'deepseek-ai/deepseek-v4-flash-0731',
     active_keys: NIM_API_KEYS.length,
     reasoning_display: SHOW_REASONING,
     thinking_mode: THINKING_MODE ? THINKING_MODE : 'disabled'
@@ -71,7 +73,7 @@ app.get('/v1/models', (req, res) => {
 app.post('/v1/chat/completions', async (req, res) => {
   try {
     const { model, messages, temperature, max_tokens, stream } = req.body;
-    const nimModel = MODEL_MAPPING[model] || 'deepseek-ai/deepseek-v4-flash';
+    const nimModel = MODEL_MAPPING[model] || 'deepseek-ai/deepseek-v4-flash-0731';
 
     const nimRequest = {
       model: nimModel,
